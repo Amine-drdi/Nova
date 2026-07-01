@@ -47,46 +47,51 @@ export type Client = typeof clients.$inferSelect;
 export type InsertClient = typeof clients.$inferInsert;
 
 // ─── Missions ───
-export const missions = mysqlTable("nova_missions", {
-  id: serial("id").primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
-  query: text("query").notNull(),
-  status: mysqlEnum("status", ["draft", "queued", "running", "completed", "failed", "cancelled"]).default("draft").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
-  clientIds: json("client_ids"),
-  plannedTasks: int("planned_tasks").default(0),
-  completedTasks: int("completed_tasks").default(0),
-  failedTasks: int("failed_tasks").default(0),
-  result: json("result"),
-  errorMessage: text("error_message"),
-  startedAt: timestamp("started_at"),
-  completedAt: timestamp("completed_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+export const missions = mysqlTable('nova_missions', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  query: text('query'),
+  status: mysqlEnum('status', ['queued', 'running', 'completed', 'failed', 'cancelled'])
+    .default('queued')
+    .notNull(),
+  priority: mysqlEnum('priority', ['low', 'medium', 'high', 'critical']).default('medium'),
+  clientIds: json('client_ids'),
+  plannedTasks: int('planned_tasks').default(0),
+  completedTasks: int('completed_tasks').default(0),
+  failedTasks: int('failed_tasks').default(0),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
 
 export type Mission = typeof missions.$inferSelect;
 export type InsertMission = typeof missions.$inferInsert;
 
 // ─── SEO Tasks ───
-export const seoTasks = mysqlTable("nova_seo_tasks", {
-  id: serial("id").primaryKey(),
-  missionId: bigint("mission_id", { mode: "number", unsigned: true }),
-  clientId: bigint("client_id", { mode: "number", unsigned: true }).notNull(),
-  type: mysqlEnum("type", [
-    "update_meta", "update_schema_org", "generate_content", "optimize_images",
-    "build_sitemap", "submit_sitemap", "check_broken_links", "update_robots_txt",
-    "create_redirect", "analyze_keywords", "audit_performance", "custom",
-  ]).notNull(),
-  status: mysqlEnum("status", ["pending", "queued", "running", "completed", "failed", "cancelled"]).default("pending").notNull(),
-  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
-  targetUrl: varchar("target_url", { length: 500 }),
-  payload: json("payload"),
-  result: json("result"),
-  errorMessage: text("error_message"),
-  startedAt: timestamp("started_at"),
-  userId: varchar('user_id', { length: 36 }).notNull(),
-  completedAt: timestamp("completed_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+export const seoTasks = mysqlTable('nova_seo_tasks', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  targetUrl: varchar('target_url', { length: 500 }),
+  payload: text('payload'),
+  type: mysqlEnum('type', [
+    'custom', 'update_meta', 'update_schema_org', 'generate_content',
+    'optimize_images', 'build_sitemap', 'submit_sitemap', 'check_broken_links',
+    'update_robots_txt', 'create_redirect', 'analyze_keywords', 'audit_performance'
+  ]).default('custom'),
+  status: mysqlEnum('status', ['pending', 'queued', 'running', 'completed', 'failed', 'cancelled'])
+    .default('pending')
+    .notNull(),
+  priority: mysqlEnum('priority', ['low', 'medium', 'high', 'critical']).default('medium'),
+  clientId: int('client_id'),
+  missionId: int('mission_id'),
+  userId: varchar('user_id', { length: 36 }),
+  result: text('result'),
+  errorMessage: text('error_message'),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
 
 export type SeoTask = typeof seoTasks.$inferSelect;
