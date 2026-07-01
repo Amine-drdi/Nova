@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\"",
-    "vercel-build": "pnpm install --frozen-lockfile --no-frozen-lockfile && pnpm run build",
+    "vercel-build": "yarn install --frozen-lockfile || yarn install && yarn run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "NODE_ENV=production node dist/boot.js",
@@ -18,8 +18,8 @@
     "db:push": "drizzle-kit push"
   },
   "engines": {
-    "node": "20.x",
-    "pnpm": ">=8.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -110,11 +110,5 @@
     "prettier": "^3.7.4",
     "vitest": "^4.0.16",
     "drizzle-kit": "^0.31.8"
-  },
-  "pnpm": {
-    "overrides": {
-      "react": "19.2.0",
-      "react-dom": "19.2.0"
-    }
   }
 }
