@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { createRouter, publicQuery } from "./middleware";
-import { getDb } from "./queries/connection";
+import { createRouter, publicQuery } from './middleware.js';
+import { getDb } from './queries/connection.js';
 import { clients } from "@/../db/schema";
 import { eq, desc, like, or } from "drizzle-orm";
 

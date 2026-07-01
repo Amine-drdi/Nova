@@ -1,11 +1,11 @@
-import { authRouter } from "./auth-router";
-import { createRouter, publicQuery } from "./middleware";
-import { clientRouter } from "./client-router";
-import { seoTaskRouter } from "./seo-task-router";
-import { keywordRouter } from "./keyword-router";
-import { pageSeoRouter } from "./page-seo-router";
-import { backlinkRouter } from "./backlink-router";
-import { missionRouter } from "./mission-router";
+import { authRouter } from './auth-router.js';
+import { createRouter, publicQuery } from './middleware.js';
+import { clientRouter } from './client-router.js';
+import { seoTaskRouter } from './seo-task-router.js';
+import { keywordRouter } from './keyword-router.js';
+import { pageSeoRouter } from './page-seo-router.js';
+import { backlinkRouter } from './backlink-router.js';
+import { missionRouter } from './mission-router.js';
 
 export const appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
