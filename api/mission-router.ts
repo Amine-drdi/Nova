@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { missions, seoTasks, clients, type InsertMission } from "../db/schema.js";
+import { missions, seoTasks, clients } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 // ─── NLP Intent Parser ───
@@ -225,8 +225,8 @@ export const missionRouter = createRouter({
 
     const taskPlan = generateTaskPlan(intent);
     
-    // ✅ CORRECTION ICI : Construction explicite de l'objet mission
-    const missionData: Partial<InsertMission> = {
+    // Construction complète de la mission avec toutes les propriétés
+    const missionData: any = {
       title: generateMissionTitle(intent, input.query),
       query: input.query,
       status: "queued",
@@ -235,14 +235,15 @@ export const missionRouter = createRouter({
       plannedTasks: taskPlan.length * targetClients.length,
       completedTasks: 0,
       failedTasks: 0,
+      startedAt: null,
+      completedAt: null,
     };
 
-    const result = await db
+    const [missionId] = await db
       .insert(missions)
       .values(missionData)
       .$returningId();
 
-    const missionId = result[0]?.id;
     if (!missionId) {
       throw new Error('Failed to create mission');
     }
@@ -250,20 +251,32 @@ export const missionRouter = createRouter({
     const createdTasks: number[] = [];
     for (const client of targetClients) {
       for (const plan of taskPlan) {
-        const taskResult = await db.insert(seoTasks).values({
-          missionId: missionId,
-          clientId: client.id,
-          type: plan.type as any,
+        // Construction complète de chaque tâche avec toutes les propriétés
+        const taskData: any = {
+          name: plan.label,
+          type: plan.type,
           status: "queued",
           priority: input.priority,
+          missionId: missionId,
+          clientId: client.id,
+          userId: null,
+          targetUrl: null,
           payload: JSON.stringify({ 
             ...plan.payload, 
             ...(intent.urls ? { urls: intent.urls } : {}), 
             ...(intent.keywords ? { keywords: intent.keywords } : {}) 
           }),
-        }).$returningId();
+          result: null,
+          errorMessage: null,
+          startedAt: null,
+          completedAt: null,
+        };
         
-        const taskId = taskResult[0]?.id;
+        const [taskId] = await db
+          .insert(seoTasks)
+          .values(taskData)
+          .$returningId();
+        
         if (taskId) createdTasks.push(taskId);
       }
     }
