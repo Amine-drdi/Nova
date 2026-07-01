@@ -6,7 +6,7 @@ import { appRouter } from './router.js';
 import { createContext } from './context.js';
 import { env } from './lib/env.js';
 import { createOAuthCallbackHandler } from './kimi/auth.js';
-import { Paths } from "../contracts/constants";
+import { Paths } from "../contracts/constants.js";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -26,7 +26,7 @@ export default app;
 
 if (env.isProduction) {
   const { serve } = await import("@hono/node-server");
-  const { serveStaticFiles } = await import("./lib/vite");
+  const { serveStaticFiles } = await import("./lib/vite.js");
   serveStaticFiles(app);
 
   const port = parseInt(process.env.PORT || "3000");

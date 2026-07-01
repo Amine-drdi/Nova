@@ -4,7 +4,7 @@ import * as jose from "jose";
 import * as cookie from "cookie";
 import { env } from '../lib/env.js';
 import { getSessionCookieOptions } from '../lib/cookies.js';
-import { Session } from "../../contracts/constants";
+import { Session } from "../../contracts/constants.js";
 import { Errors } from "../../contracts/errors.js";
 import { signSessionToken, verifySessionToken } from './session.js';
 import { users as kimiUsers } from './platform.js';
