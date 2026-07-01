@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { pagesSeo } from "@/../db/schema";
+import { pagesSeo } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export const pageSeoRouter = createRouter({

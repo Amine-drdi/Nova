@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { missions, seoTasks, clients } from "@/../db/schema";
+import { missions, seoTasks, clients } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 // ─── NLP Intent Parser ───

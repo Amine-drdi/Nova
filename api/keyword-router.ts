@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { keywordRankings } from "@/../db/schema";
+import { keywordRankings } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export const keywordRouter = createRouter({

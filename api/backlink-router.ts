@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { backlinks } from "@/../db/schema";
+import { backlinks } from "../db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export const backlinkRouter = createRouter({

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { seoTasks } from "@/../db/schema";
+import { seoTasks } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export const seoTaskRouter = createRouter({
