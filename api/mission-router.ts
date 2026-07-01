@@ -225,7 +225,7 @@ export const missionRouter = createRouter({
 
     const taskPlan = generateTaskPlan(intent);
     
-    // Construction complète de la mission avec toutes les propriétés
+    // Construction complète de la mission
     const missionData: any = {
       title: generateMissionTitle(intent, input.query),
       query: input.query,
@@ -239,11 +239,12 @@ export const missionRouter = createRouter({
       completedAt: null,
     };
 
-    const [missionId] = await db
+    const result = await db
       .insert(missions)
       .values(missionData)
       .$returningId();
 
+    const missionId = result[0]?.id;
     if (!missionId) {
       throw new Error('Failed to create mission');
     }
@@ -251,7 +252,6 @@ export const missionRouter = createRouter({
     const createdTasks: number[] = [];
     for (const client of targetClients) {
       for (const plan of taskPlan) {
-        // Construction complète de chaque tâche avec toutes les propriétés
         const taskData: any = {
           name: plan.label,
           type: plan.type,
@@ -272,11 +272,12 @@ export const missionRouter = createRouter({
           completedAt: null,
         };
         
-        const [taskId] = await db
+        const taskResult = await db
           .insert(seoTasks)
           .values(taskData)
           .$returningId();
         
+        const taskId = taskResult[0]?.id;
         if (taskId) createdTasks.push(taskId);
       }
     }
@@ -289,8 +290,11 @@ export const missionRouter = createRouter({
       })
       .where(eq(missions.id, missionId));
 
+    // ✅ CORRECTION ICI : Utiliser forEach avec un timeout
     for (const taskId of createdTasks) {
-      setTimeout(() => executeTask(taskId), 100 + Math.random() * 500);
+      setTimeout(() => {
+        executeTask(taskId);
+      }, 100 + Math.random() * 500);
     }
 
     return {
