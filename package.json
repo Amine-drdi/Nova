@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\"",
+    "vercel-build": "npm install --legacy-peer-deps --no-audit --no-fund && npm run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "NODE_ENV=production node dist/boot.js",
@@ -15,6 +16,10 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
