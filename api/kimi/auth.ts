@@ -5,7 +5,7 @@ import * as cookie from "cookie";
 import { env } from '../lib/env.js';
 import { getSessionCookieOptions } from '../lib/cookies.js';
 import { Session } from "../../contracts/constants";
-import { Errors } from "../../contracts/errors";
+import { Errors } from "../../contracts/errors.js";
 import { signSessionToken, verifySessionToken } from './session.js';
 import { users as kimiUsers } from './platform.js';
 import { findUserByUnionId, upsertUser } from '../queries/users.js';
