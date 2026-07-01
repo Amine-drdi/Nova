@@ -17,8 +17,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
   },
-  "engines": {
-    "node": ">=18.0.0",
+   "engines": {
+    "node": "22.x",
     "npm": ">=9.0.0"
   },
   "dependencies": {
