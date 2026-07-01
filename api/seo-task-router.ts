@@ -1,6 +1,6 @@
 import { publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { seoTasks } from '../db/schema.js';
+import { seoTasks, type InsertSeoTask } from '../db/schema.js';
 import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 
@@ -17,12 +17,18 @@ export const seoTaskRouter = {
     .mutation(async ({ input }) => {
       const db = getDb();
 
+      // Construction explicite de l'objet à insérer
+      const insertData: Partial<InsertSeoTask> = {
+        name: input.name,
+        status: "queued",
+      };
+      
+      if (input.targetUrl) insertData.targetUrl = input.targetUrl;
+      if (input.payload) insertData.payload = input.payload;
+
       const result = await db
         .insert(seoTasks)
-        .values({
-          ...input,
-          status: "queued",
-        })
+        .values(insertData)
         .$returningId();
 
       const id = result[0]?.id;

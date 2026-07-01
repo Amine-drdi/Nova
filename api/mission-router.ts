@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from './middleware.js';
 import { getDb } from './queries/connection.js';
-import { missions, seoTasks, clients } from "../db/schema.js";
+import { missions, seoTasks, clients, type InsertMission } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 // ─── NLP Intent Parser ───
@@ -224,35 +224,65 @@ export const missionRouter = createRouter({
     }
 
     const taskPlan = generateTaskPlan(intent);
-    const [mission] = await db.insert(missions).values({
+    
+    // ✅ CORRECTION ICI : Construction explicite de l'objet mission
+    const missionData: Partial<InsertMission> = {
       title: generateMissionTitle(intent, input.query),
       query: input.query,
-      status: "queued", priority: input.priority,
+      status: "queued",
+      priority: input.priority,
       clientIds: JSON.stringify(targetClients.map(c => c.id)),
       plannedTasks: taskPlan.length * targetClients.length,
-      completedTasks: 0, failedTasks: 0,
-    }).$returningId();
+      completedTasks: 0,
+      failedTasks: 0,
+    };
+
+    const result = await db
+      .insert(missions)
+      .values(missionData)
+      .$returningId();
+
+    const missionId = result[0]?.id;
+    if (!missionId) {
+      throw new Error('Failed to create mission');
+    }
 
     const createdTasks: number[] = [];
     for (const client of targetClients) {
       for (const plan of taskPlan) {
-        const [task] = await db.insert(seoTasks).values({
-          missionId: mission.id, clientId: client.id,
-          type: plan.type as any, status: "queued", priority: input.priority,
-          payload: JSON.stringify({ ...plan.payload, ...(intent.urls ? { urls: intent.urls } : {}), ...(intent.keywords ? { keywords: intent.keywords } : {}) }),
+        const taskResult = await db.insert(seoTasks).values({
+          missionId: missionId,
+          clientId: client.id,
+          type: plan.type as any,
+          status: "queued",
+          priority: input.priority,
+          payload: JSON.stringify({ 
+            ...plan.payload, 
+            ...(intent.urls ? { urls: intent.urls } : {}), 
+            ...(intent.keywords ? { keywords: intent.keywords } : {}) 
+          }),
         }).$returningId();
-        createdTasks.push(task.id);
+        
+        const taskId = taskResult[0]?.id;
+        if (taskId) createdTasks.push(taskId);
       }
     }
 
-    await db.update(missions).set({ plannedTasks: createdTasks.length, status: "running", startedAt: new Date() }).where(eq(missions.id, mission.id));
+    await db.update(missions)
+      .set({ 
+        plannedTasks: createdTasks.length, 
+        status: "running", 
+        startedAt: new Date() 
+      })
+      .where(eq(missions.id, missionId));
 
     for (const taskId of createdTasks) {
       setTimeout(() => executeTask(taskId), 100 + Math.random() * 500);
     }
 
     return {
-      success: true, missionId: mission.id,
+      success: true,
+      missionId: missionId,
       title: generateMissionTitle(intent, input.query),
       clients: targetClients.map(c => c.name),
       plannedTasks: createdTasks.length,
