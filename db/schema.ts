@@ -84,6 +84,7 @@ export const seoTasks = mysqlTable("nova_seo_tasks", {
   result: json("result"),
   errorMessage: text("error_message"),
   startedAt: timestamp("started_at"),
+  userId: varchar('user_id', { length: 36 }).notNull(),
   completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
