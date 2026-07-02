@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: nova-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crmlnrdnova
+      MYSQL_USER: crmlnrdnova
+      MYSQL_PASSWORD: DB072026Nova
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nova-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nova-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: mysql://crmlnrdnova:DB072026Nova@mysql:3306/crmlnrdnova
+      APP_ID: ${APP_ID:-nova-app}
+      APP_SECRET: ${APP_SECRET:-secret}
+      KIMI_AUTH_URL: ${KIMI_AUTH_URL:-https://auth.kimi.com}
+      KIMI_OPEN_URL: ${KIMI_OPEN_URL:-https://open.kimi.com}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+    networks:
+      - nova-network
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nova-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_KIMI_AUTH_URL: ${VITE_KIMI_AUTH_URL:-https://auth.kimi.com}
+      VITE_APP_ID: ${VITE_APP_ID:-your-app-id}
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - nova-network
+    command: npm run dev
+
+volumes:
+  mysql_data:
+
+networks:
+  nova-network:
+    driver: bridge

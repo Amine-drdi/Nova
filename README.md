@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+# Nova - Marketing Digital Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Plateforme SaaS complète pour optimiser et gérer tous les aspects du marketing digital.
 
-Currently, two official plugins are available:
+## 📁 Structure du Projet
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+Nova/
+├── frontend/                 # Application React + Vite
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── tsconfig.json
+│
+├── backend/                  # API Hono + tRPC + Drizzle
+│   ├── src/
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── drizzle.config.ts
+│   └── .env
+│
+├── docker-compose.yml        # Dev avec Docker
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Quick Start
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Installation
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Frontend
+cd frontend
+npm install
+
+# Backend (dans un autre terminal)
+cd backend
+npm install
 ```
+
+### Configuration
+
+```bash
+# Backend - Créer .env
+cd backend
+cp .env.example .env
+```
+
+### Démarrer le développement
+
+```bash
+# Terminal 1 - Frontend (port 5173)
+cd frontend
+npm run dev
+
+# Terminal 2 - Backend (port 3000)
+cd backend
+npm run dev
+```
+
+### Docker Compose
+
+```bash
+docker-compose up
+```
+
+## 📚 Documentation
+
+- [Frontend README](./frontend/README.md)
+- [Backend README](./backend/README.md)
+
+## 🔧 Stack Technique
+
+### Frontend
+- React 19 + TypeScript
+- Vite 7.2
+- Tailwind CSS + Shadcn/ui
+- React Router 7
+
+### Backend
+- Hono 4.8
+- tRPC 11.8
+- Drizzle ORM 0.45
+- MySQL 8
